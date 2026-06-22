@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BLP_LANDSCAPE COFEE_MVP</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="password-screen" id="passwordScreen">
+      <form class="password-card" id="passwordForm">
+        <p class="eyebrow">BLP_LANDSCAPE COFEE_MVP</p>
+        <h1>LANDSCAPE COFFEE 07<br />Launch Companion</h1>
+        <p>ブランドローンチの進捗と、テキスト制作を進めるためのMVPです。</p>
+        <label>
+          <span>パスワード</span>
+          <input id="passwordInput" type="password" autocomplete="current-password" />
+        </label>
+        <button type="submit">入る</button>
+        <small id="passwordError" aria-live="polite"></small>
+      </form>
+    </div>
+
+    <div class="app-shell" id="appShell" hidden>
+      <aside class="sidebar">
+        <div class="brand-block">
+          <span>BLP_LANDSCAPE COFEE_MVP</span>
+          <strong>LANDSCAPE COFFEE 07<br />Launch Companion</strong>
+        </div>
+
+        <nav class="phase-nav" id="phaseNav" aria-label="フェーズ">
+        </nav>
+
+        <section class="side-note">
+          <strong>フェーズを選ぶと変わるもの</strong>
+          <span>注視点、今日やること、ガント表示、Text Studioの候補が切り替わります。</span>
+        </section>
+
+        <button class="manual-button" id="openManual" type="button">
+          <strong>Manual</strong>
+          <span>迷ったらここを見る</span>
+        </button>
+
+        <div class="sidebar-footer">
+          <div><span>Open</span><strong>2026.08.29</strong></div>
+          <div><span>クラファン公開</span><strong>2026.07.15</strong></div>
+          <div><span>Tasks</span><strong id="totalTasks">57</strong></div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow" id="phaseEyebrow">02 Build</p>
+            <h1 id="pageTitle">Today&apos;s Push</h1>
+            <p id="phasePurpose">クラファンと導線作成</p>
+          </div>
+          <div class="date-chip">
+            <span>Launchまで</span>
+            <strong id="daysToLaunch">D-68</strong>
+          </div>
+        </header>
+
+        <section class="focus-switcher">
+          <article class="look-card">
+            <span>LOOK HERE</span>
+            <strong id="lookTitle">クラファン本文が詰まり気味</strong>
+            <p id="lookDescription">今日の注視ポイント。初稿を出すところまで進めたい。</p>
+          </article>
+          <div class="mode-card">
+            <span>見るものを切り替え</span>
+            <div class="pill-row" id="modeTabs"></div>
+          </div>
+        </section>
+
+        <section class="content-grid">
+          <section class="panel queue-panel">
+            <header class="panel-head">
+              <div>
+                <h2 id="queueTitle">今日やる 3件</h2>
+                <p id="queueSub">止まり/文章は上の切り替えで見る</p>
+              </div>
+              <button class="text-button" id="showCompleted" type="button">完了を見る</button>
+            </header>
+            <div class="action-radar" id="actionRadar"></div>
+            <div class="queue-tabs" id="queueTabs"></div>
+            <div class="task-list" id="focusTasks"></div>
+          </section>
+
+          <section class="panel dashboard-panel">
+            <header class="panel-head">
+              <div>
+                <h2>Spreadsheet Dashboard</h2>
+                <p>スプレッドシートの情報を見やすくする場所</p>
+              </div>
+              <div class="status-filter">
+                <label for="statusFilter">状態</label>
+                <select id="statusFilter">
+                  <option value="all">すべて</option>
+                  <option value="todo">未着手</option>
+                  <option value="doing">進行中</option>
+                  <option value="waiting">判断待ち</option>
+                  <option value="done">完了</option>
+                </select>
+              </div>
+            </header>
+            <div class="sheet-tabs" id="sheetTabs"></div>
+            <div class="metric-grid" id="metrics"></div>
+            <div class="dashboard-body" id="dashboardBody"></div>
+          </section>
+        </section>
+      </main>
+
+      <aside class="rightbar">
+        <section class="studio">
+          <header>
+            <h2>Text Studio</h2>
+            <p>テキストだけを作る。投稿、クラファン、note、依頼文をブランド文脈込みで下書きします。</p>
+          </header>
+          <div class="studio-tools" id="contentTypeButtons"></div>
+          <label class="draft-label" for="draftPreview">Draft Preview</label>
+          <textarea id="draftPreview" rows="10"></textarea>
+          <div class="studio-actions">
+            <button class="primary-action" id="generateDraft" type="button">下書きを作る</button>
+            <button class="secondary-action" id="saveDraft" type="button">保存</button>
+          </div>
+          <div class="saved">
+            <div class="saved-head">
+              <span>Saved Drafts</span>
+              <button id="clearDrafts" type="button">履歴を消す</button>
+            </div>
+            <div id="savedDrafts"></div>
+          </div>
+        </section>
+
+        <section class="tone-memory">
+          <header>
+            <h2>Tone Memory</h2>
+            <span>生成文の参照元</span>
+          </header>
+          <p>ジャーナリング、Notion、事業計画書から抽出した「言葉の芯」。Text Studioが文体や判断軸として使います。</p>
+          <blockquote>思い出は複利になる</blockquote>
+          <blockquote>ただいまと言える場所</blockquote>
+          <blockquote>頼り頼られる幸せ</blockquote>
+        </section>
+      </aside>
+    </div>
+
+    <dialog id="manualDialog" class="manual-dialog">
+      <div class="manual-content">
+        <button class="close-button" id="closeManual" type="button">閉じる</button>
+        <p class="eyebrow">Manual</p>
+        <h2>迷ったときの使い方</h2>
+        <ol>
+          <li><strong>今日やる</strong> を見て、まず3件だけ前に進めます。</li>
+          <li><strong>止まり</strong> で判断待ちや未確定タスクを確認します。</li>
+          <li><strong>作る文章</strong> からText Studioで下書きを作ります。</li>
+          <li><strong>全体</strong> と Spreadsheet Dashboard でガント、一覧、完了タスクを確認します。</li>
+        </ol>
+        <h3>ステータス</h3>
+        <p>タスクは `未着手 / 進行中 / 判断待ち / 完了` の4状態で管理します。完了したタスクは今日やる一覧から外れ、Dashboardのタスク一覧に残ります。</p>
+        <h3>保存</h3>
+        <p>Text Studioで作った文章は、内容を確認してから保存します。保存した文章はこのブラウザのローカルに残ります。</p>
+      </div>
+    </dialog>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
