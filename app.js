@@ -157,6 +157,20 @@ function formatDate(value) {
   return `${d.getMonth() + 1}/${d.getDate()}`
 }
 
+function formatFullDate(date) {
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, '0'),
+    String(date.getDate()).padStart(2, '0'),
+  ].join('.')
+}
+
+function formatLaunchCountdown(days) {
+  if (days > 0) return `あと${days}日`
+  if (days === 0) return '今日オープン'
+  return `オープン後${Math.abs(days)}日`
+}
+
 function statusLabel(status) {
   return {
     todo: '未着手',
@@ -228,10 +242,14 @@ function render() {
 
 function renderChrome() {
   const phase = phases.find(item => item.id === selectedPhase)
+  const today = startOfDay(new Date())
+  const daysToLaunch = daysBetween(today, LAUNCH_DATE)
   document.querySelector('#totalTasks').textContent = String(tasks.length)
   document.querySelector('#phaseEyebrow').textContent = `${phase.code} ${phase.label}`
   document.querySelector('#phasePurpose').textContent = phase.purpose
-  document.querySelector('#daysToLaunch').textContent = `D-${Math.max(daysBetween(new Date(), LAUNCH_DATE), 0)}`
+  document.querySelector('#todayDate').textContent = formatFullDate(today)
+  document.querySelector('#openDate').textContent = formatFullDate(parseDate(LAUNCH_DATE))
+  document.querySelector('#daysToLaunch').textContent = formatLaunchCountdown(daysToLaunch)
 
   const phaseNav = document.querySelector('#phaseNav')
   phaseNav.innerHTML = phases.map(item => `

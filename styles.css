@@ -262,12 +262,27 @@ p {
 }
 
 .date-chip {
-  min-width: 148px;
-  padding: 12px;
+  display: grid;
+  grid-template-columns: repeat(3, max-content);
+  gap: 14px;
+  min-width: 360px;
+  padding: 12px 14px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--panel);
   box-shadow: var(--shadow);
+}
+
+.date-chip div {
+  display: grid;
+  gap: 4px;
+  padding-right: 14px;
+  border-right: 1px solid var(--line);
+}
+
+.date-chip div:last-child {
+  padding-right: 0;
+  border-right: 0;
 }
 
 .date-chip span {
@@ -278,8 +293,13 @@ p {
 
 .date-chip strong {
   display: block;
-  margin-top: 4px;
-  font-size: 20px;
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.date-chip .countdown strong {
+  color: var(--brass-dark);
+  font-size: 18px;
 }
 
 .focus-switcher {
@@ -938,6 +958,12 @@ p {
   .rightbar {
     display: grid;
     grid-template-columns: 1fr;
+  }
+
+  .date-chip {
+    grid-template-columns: 1fr 1fr 1fr;
+    min-width: 0;
+    width: 100%;
   }
 
   .metric-grid,
