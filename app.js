@@ -213,12 +213,29 @@ function taskScore(item) {
   return weight + urgency
 }
 
+function hasStarted(item) {
+  return parseDate(item.startDate) <= startOfDay(new Date())
+}
+
+function isOverdue(item) {
+  return parseDate(item.endDate) < startOfDay(new Date())
+}
+
+function phaseBounds() {
+  const items = phaseTasks()
+  if (!items.length) return null
+  return items.reduce((bounds, item) => ({
+    start: bounds.start < item.startDate ? bounds.start : item.startDate,
+    end: bounds.end > item.endDate ? bounds.end : item.endDate,
+  }), { start: items[0].startDate, end: items[0].endDate })
+}
+
 function modeTasks(mode = selectedMode) {
   const items = phaseTasks()
   if (mode === 'stalled') {
     return items
       .filter(item => getStatus(item) === 'waiting')
-      .concat(items.filter(item => getStatus(item) !== 'done' && daysBetween(new Date(), item.endDate) < 0))
+      .concat(items.filter(item => getStatus(item) !== 'done' && isOverdue(item)))
       .slice(0, 8)
   }
   if (mode === 'content') {
@@ -226,7 +243,7 @@ function modeTasks(mode = selectedMode) {
   }
   if (mode === 'all') return items
   return items
-    .filter(item => getStatus(item) !== 'done')
+    .filter(item => getStatus(item) !== 'done' && hasStarted(item))
     .sort((a, b) => taskScore(a) - taskScore(b))
     .slice(0, 3)
 }
@@ -298,6 +315,8 @@ function renderModes() {
 
 function renderQueue() {
   const phase = phases.find(item => item.id === selectedPhase)
+  const bounds = phaseBounds()
+  const phaseStartsInFuture = bounds ? parseDate(bounds.start) > startOfDay(new Date()) : false
   const tasksForMode = showCompletedOnly
     ? phaseTasks().filter(item => getStatus(item) === 'done')
     : modeTasks()
@@ -305,11 +324,17 @@ function renderQueue() {
   const stalled = modeTasks('stalled')[0]
   const content = modeTasks('content')[0]
 
-  const look = stalled || first || phaseTasks()[0]
-  document.querySelector('#lookTitle').textContent = look ? `${look.name}を確認` : `${phase.label}を確認`
-  document.querySelector('#lookDescription').textContent = look
-    ? `${categoryLabel(look.category)} / ${formatDate(look.startDate)}-${formatDate(look.endDate)}。次に進むための状態を見ます。`
-    : 'このフェーズのタスクはまだありません。'
+  const look = stalled || first
+  if (look) {
+    document.querySelector('#lookTitle').textContent = `${look.name}を確認`
+    document.querySelector('#lookDescription').textContent = `${categoryLabel(look.category)} / ${formatDate(look.startDate)}-${formatDate(look.endDate)}。次に進むための状態を見ます。`
+  } else if (phaseStartsInFuture) {
+    document.querySelector('#lookTitle').textContent = `${phase.label}はまだ開始前`
+    document.querySelector('#lookDescription').textContent = `${phase.title}は${formatDate(bounds.start)}開始予定です。今日やる欄には出さず、全体像だけ確認できます。`
+  } else {
+    document.querySelector('#lookTitle').textContent = `${phase.label}を確認`
+    document.querySelector('#lookDescription').textContent = '今日やるタスクはありません。必要なら全体や作る文章を確認してください。'
+  }
 
   const titleMap = {
     today: `今日やる ${modeTasks('today').length}件`,
@@ -359,7 +384,13 @@ function renderQueue() {
 
   const list = document.querySelector('#focusTasks')
   if (!tasksForMode.length) {
-    list.innerHTML = `<article class="focus-task"><div></div><div><h3>表示するタスクはありません</h3><p>別の表示に切り替えるか、Spreadsheet Dashboardで全体を確認してください。</p></div></article>`
+    const emptyTitle = phaseStartsInFuture && selectedMode === 'today'
+      ? `${phase.label}は${formatDate(bounds.start)}から`
+      : '表示するタスクはありません'
+    const emptyCopy = phaseStartsInFuture && selectedMode === 'today'
+      ? '今日はまだこのフェーズの作業日ではありません。タスクの確認は「全体」またはSpreadsheet Dashboardで見られます。'
+      : '別の表示に切り替えるか、Spreadsheet Dashboardで全体を確認してください。'
+    list.innerHTML = `<article class="focus-task"><div></div><div><h3>${emptyTitle}</h3><p>${emptyCopy}</p></div></article>`
     return
   }
   list.innerHTML = tasksForMode.map((item, index) => renderFocusTask(item, index)).join('')
