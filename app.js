@@ -591,6 +591,7 @@ function setupPassword() {
   const passwordScreen = document.querySelector('#passwordScreen')
   const appShell = document.querySelector('#appShell')
   const isAuthed = localStorage.getItem(AUTH_KEY) === 'true'
+  document.body.classList.toggle('auth-locked', !isAuthed)
   if (isAuthed) {
     passwordScreen.hidden = true
     appShell.hidden = false
@@ -602,6 +603,7 @@ function setupPassword() {
       localStorage.setItem(AUTH_KEY, 'true')
       passwordScreen.hidden = true
       appShell.hidden = false
+      document.body.classList.remove('auth-locked')
       render()
     } else {
       document.querySelector('#passwordError').textContent = 'パスワードが違います。'

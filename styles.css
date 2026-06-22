@@ -34,6 +34,14 @@ body {
   letter-spacing: 0;
 }
 
+[hidden] {
+  display: none !important;
+}
+
+body.auth-locked {
+  overflow: hidden;
+}
+
 button,
 input,
 select,
@@ -48,9 +56,15 @@ select {
 
 .password-screen {
   display: grid;
+  position: fixed;
+  inset: 0;
+  z-index: 20;
   place-items: center;
   min-height: 100vh;
   padding: 24px;
+  background:
+    linear-gradient(135deg, rgba(184, 138, 74, 0.1), transparent 30%),
+    var(--paper);
 }
 
 .password-card {
